@@ -2,6 +2,8 @@
 
 # 🧋 Milk Tea Mystic Selector
 
+<img src="./home.png" alt="项目首页预览" width="900" />
+
 ### 专治选择困难症 · 让决策变得简单有趣
 
 
