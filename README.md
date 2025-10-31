@@ -1,5 +1,7 @@
 # 🧋 Milk Tea Mystic Selector 奶茶玄学推荐器
 
+<div align="right"><a href="https://yigather.com/milk-tea-mystic-selector/index.html">线上体验地址 →</a></div>
+
 <div align="center">
   <img src="./milk-tea-mystic-selector/home.png" alt="项目首页预览" width="900" />
 </div>
