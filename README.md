@@ -1,5 +1,9 @@
 # 🧋 Milk Tea Mystic Selector 奶茶玄学推荐器
 
+<div align="center">
+  <img src="./milk-tea-mystic-selector/home.png" alt="项目首页预览" width="900" />
+</div>
+
 让每个选择都变得轻松、有趣、无压力。
 
 [![GitHub stars](https://img.shields.io/github/stars/louislili/milk-tea-mystic-selector?style=social)](https://github.com/louislili/milk-tea-mystic-selector)
