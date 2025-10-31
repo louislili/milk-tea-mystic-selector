@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奶茶玄学选择器 - 拯救选择困难症</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="bg-decoration">
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+        <div class="mountain mountain1"></div>
+        <div class="mountain mountain2"></div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 标题区域 -->
+        <header class="header">
+            <h1 class="main-title">奶茶玄学选择器</h1>
+            <p class="subtitle">🧙‍♀️ 拯救奶茶选择困难症 🧙‍♀️</p>
+            <div class="divider"></div>
+        </header>
+
+        <!-- 开源信息横幅 -->
+        <div class="oss-banner" role="note" aria-label="开源信息">
+            <span>本项目已开源：</span>
+            <a href="https://yigather.com" target="_blank" rel="noopener">yigather.com</a>
+        </div>
+
+        <!-- 运势显示区域 -->
+        <div class="fortune-display">
+            <div class="fortune-card">
+                <h3>今日奶茶运势</h3>
+                <div id="fortune-text">点击下方开始占卜...</div>
+                <div class="fortune-stars">
+                    <span class="star">⭐</span>
+                    <span class="star">⭐</span>
+                    <span class="star">⭐</span>
+                    <span class="star">⭐</span>
+                    <span class="star">⭐</span>
+                </div>
+                <!-- 互动统计 -->
+                <div class="interaction-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">今日占卜</span>
+                        <span class="stat-value" id="daily-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">连击数</span>
+                        <span class="stat-value" id="combo-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">幸运值</span>
+                        <span class="stat-value" id="luck-value">50</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 选择区域 -->
+        <div class="selection-area">
+            <div class="choice-grid">
+                <div class="choice-card" data-choice="水逆">
+                    <div class="choice-icon">💧</div>
+                    <h3>水逆退散</h3>
+                    <p>选择此项将获得全糖加持</p>
+                    <div class="mystical-effect"></div>
+                </div>
+                
+                <div class="choice-card" data-choice="桃花">
+                    <div class="choice-icon">🌸</div>
+                    <h3>桃花爆棚</h3>
+                    <p>草莓奶盖加椰果，今晚必遇帅哥</p>
+                    <div class="mystical-effect"></div>
+                </div>
+                
+                <div class="choice-card" data-choice="财运">
+                    <div class="choice-icon">💰</div>
+                    <h3>财运亨通</h3>
+                    <p>金桔柠檬茶，招财进宝</p>
+                    <div class="mystical-effect"></div>
+                </div>
+                
+                <div class="choice-card" data-choice="学业">
+                    <div class="choice-icon">📚</div>
+                    <h3>学业有成</h3>
+                    <p>抹茶拿铁，智慧加持</p>
+                    <div class="mystical-effect"></div>
+                </div>
+                
+                <div class="choice-card" data-choice="健康">
+                    <div class="choice-icon">🍃</div>
+                    <h3>身体健康</h3>
+                    <p>无糖绿茶，清心寡欲</p>
+                    <div class="mystical-effect"></div>
+                </div>
+                
+                <div class="choice-card" data-choice="随机">
+                    <div class="choice-icon">🎲</div>
+                    <h3>听天由命</h3>
+                    <p>让奶茶之神为你选择</p>
+                    <div class="mystical-effect"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结果显示区域 -->
+        <div class="result-area" id="result-area">
+            <div class="result-card">
+                <h3>🎊 奶茶之神的神谕 🎊</h3>
+                <div class="result-content">
+                    <div class="tea-recommendation" id="tea-recommendation"></div>
+                    <div class="mystical-blessing" id="mystical-blessing"></div>
+                    <div class="ritual-instruction" id="ritual-instruction"></div>
+                </div>
+                <button class="retry-btn" onclick="resetSelection()">重新占卜</button>
+            </div>
+        </div>
+
+        <!-- 今日宜忌 -->
+        <div class="daily-advice">
+            <h3>今日奶茶宜忌</h3>
+            <div class="advice-grid">
+                <div class="advice-item good">
+                    <span class="advice-label">宜</span>
+                    <span class="advice-text" id="good-advice">加珍珠</span>
+                </div>
+                <div class="advice-item bad">
+                    <span class="advice-label">忌</span>
+                    <span class="advice-text" id="bad-advice">喝冰的</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 成就系统 -->
+        <div class="achievement-section">
+            <h3>🏆 奶茶成就</h3>
+            <div class="achievement-grid" id="achievement-grid">
+                <!-- 成就将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <!-- 奖励展示 -->
+        <div class="reward-display" id="reward-display">
+            <div class="reward-card">
+                <h3>🎁 获得奖励</h3>
+                <div class="reward-content" id="reward-content"></div>
+                <button class="claim-btn" id="claim-btn" onclick="claimReward()">领取奖励</button>
+            </div>
+        </div>
+
+        <!-- 奶茶占卜历史 -->
+        <div class="history-section">
+            <h3>占卜历史</h3>
+            <div class="history-list" id="history-list">
+                <p class="empty-history">暂无占卜记录</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 警告弹窗 -->
+    <div class="modal" id="warning-modal">
+        <div class="modal-content">
+            <div class="warning-icon">⚠️</div>
+            <h3>奶茶之神生气了！</h3>
+            <p id="warning-message">你的玄学buff出现了问题...</p>
+            <button class="modal-btn" onclick="closeWarning()">向奶茶之神道歉</button>
+        </div>
+    </div>
+
+    <!-- 成功弹窗 -->
+    <div class="modal" id="success-modal">
+        <div class="modal-content success">
+            <div class="success-icon">✨</div>
+            <h3>奶茶之神的祝福</h3>
+            <p id="success-message">你获得了神秘的奶茶祝福！</p>
+            <button class="modal-btn" onclick="closeSuccess()">感谢奶茶之神</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
