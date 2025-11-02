@@ -695,6 +695,14 @@ class MilkTeaMysticSelector {
                 <div class="ach-desc">${ach.desc}</div>
                 <div class="ach-sparkles"></div>
             `;
+
+            // 创建粒子特效
+            const particles = document.createElement('div');
+            particles.className = 'ach-particles';
+            particles.innerHTML = Array.from({length: 12}, (_, i) => 
+                `<div class="particle" style="--delay: ${i * 0.1}s; --angle: ${i * 30}deg;"></div>`
+            ).join('');
+            card.appendChild(particles);
             overlay.appendChild(card);
 
             // 生成闪光粒子
@@ -803,11 +811,11 @@ class MilkTeaMysticSelector {
             // —— 分槽位线性飞入/飞出（WAAPI） ——
             const rect = inner.getBoundingClientRect();
             const W = rect.width, H = rect.height;
-            // 槽位（每张卡有独立位置，避免全堆在中间）
+            // 槽位（每张卡有独立位置，分布在屏幕中央区域）
             const slots = [
-                { x: 0.15, y: 0.30 }, { x: 0.36, y: 0.22 }, { x: 0.60, y: 0.30 },
-                { x: 0.24, y: 0.58 }, { x: 0.50, y: 0.52 }, { x: 0.76, y: 0.58 },
-                { x: 0.34, y: 0.42 }, { x: 0.66, y: 0.45 }
+                { x: 0.25, y: 0.25 }, { x: 0.50, y: 0.20 }, { x: 0.75, y: 0.25 },
+                { x: 0.30, y: 0.50 }, { x: 0.50, y: 0.45 }, { x: 0.70, y: 0.50 },
+                { x: 0.35, y: 0.75 }, { x: 0.65, y: 0.75 }, { x: 0.50, y: 0.65 }
             ];
             const slot = slots[i % slots.length];
             const tx = (slot.x - 0.5) * W;
