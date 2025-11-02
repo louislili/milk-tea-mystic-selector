@@ -76,6 +76,48 @@ class MilkTeaMysticSelector {
             ritual: '闭上眼睛，让奶茶之神为你选择最适合的味道',
             icon: '🎲✨',
             power: 95
+        },
+        '事业': {
+            tea: '黑糖珍珠鲜奶',
+            blessing: '事业运上升，干劲满满！',
+            ritual: '写下今日目标并小口品尝，坚定心志',
+            icon: '💼✨',
+            power: 88
+        },
+        '社交': {
+            tea: '杨枝甘露',
+            blessing: '社交顺利，魅力加持！',
+            ritual: '对着杯子微笑三秒，心中默念“人缘提升”',
+            icon: '🤝💬',
+            power: 82
+        },
+        '家庭': {
+            tea: '椰椰奶茶',
+            blessing: '家庭和睦，温馨陪伴！',
+            ritual: '与家人共享一口奶茶，心连心',
+            icon: '🏠❤️',
+            power: 80
+        },
+        '旅行': {
+            tea: '鲜果茶',
+            blessing: '旅途顺利，活力满满！',
+            ritual: '看一眼地图，喝一口果茶，启程更顺',
+            icon: '✈️🍊',
+            power: 78
+        },
+        '创意': {
+            tea: '芝士乌龙',
+            blessing: '灵感爆发，创意加持！',
+            ritual: '闻茶香五秒，闭眼想象创意画面',
+            icon: '🎨💡',
+            power: 86
+        },
+        '睡眠': {
+            tea: '桂花乌龙（低咖）',
+            blessing: '好眠安稳，舒缓身心！',
+            ritual: '深呼吸三次，感受桂花清香入心',
+            icon: '😴🌙',
+            power: 76
         }
     };
 
@@ -181,6 +223,7 @@ class MilkTeaMysticSelector {
         try {
             // 检查玄学buff
             const buffResult = this.checkMysticalBuff();
+            this.currentBuff = buffResult.buff || null;
             
             if (buffResult.hasError) {
                 this.showWarning(buffResult.errorMessage);
@@ -203,7 +246,7 @@ class MilkTeaMysticSelector {
                 teaResult.blessing += ` 🎊 获得buff：${buffResult.buff.name} - ${buffResult.buff.effect}`;
             }
 
-            // 显示结果
+            // 显示结果（弹窗集中展示）
             this.showResult(teaResult, choice);
 
             // 统计选择类型
@@ -217,11 +260,11 @@ class MilkTeaMysticSelector {
             // 检查成就
             this.checkAchievements();
 
-            // 显示成功弹窗
+            // 随机触发额外祝福提示（保留原成功弹窗逻辑）
             if (Math.random() < 0.3) {
                 setTimeout(() => {
                     this.showSuccess('奶茶之神对你的选择很满意！你获得了额外的幸运加持！');
-                }, 2000);
+                }, 1800);
             }
 
         } catch (error) {
@@ -261,17 +304,31 @@ class MilkTeaMysticSelector {
     }
 
     showResult(teaResult, choice) {
+        // 更新弹窗内容
+        const modal = document.getElementById('result-modal');
+        const modalTea = document.getElementById('modal-tea');
+        const modalBlessing = document.getElementById('modal-blessing');
+        const modalRitual = document.getElementById('modal-ritual');
+        const modalExtras = document.getElementById('modal-extras');
+
+        modalTea.innerHTML = `${teaResult.icon} ${teaResult.tea}`;
+        modalBlessing.textContent = teaResult.blessing;
+        modalRitual.textContent = `🔮 神秘仪式：${teaResult.ritual}`;
+
+        const extras = [];
+        if (this.currentBuff) {
+            extras.push(`✨ Buff：${this.currentBuff.name} - ${this.currentBuff.effect}`);
+        }
+        if (this.pendingRewards && this.pendingRewards.length > 0) {
+            const r = this.pendingRewards[0];
+            extras.push(`🎁 奖励：${r.name} - ${r.desc}`);
+        }
+        modalExtras.innerHTML = extras.length ? extras.map(e => `<div class="extra-item">${e}</div>`).join('') : '';
+
+        // 显示弹窗并隐藏页面内结果区
+        modal.classList.add('show');
         const resultArea = document.getElementById('result-area');
-        const teaRecommendation = document.getElementById('tea-recommendation');
-        const mysticalBlessing = document.getElementById('mystical-blessing');
-        const ritualInstruction = document.getElementById('ritual-instruction');
-
-        teaRecommendation.innerHTML = `${teaResult.icon} ${teaResult.tea}`;
-        mysticalBlessing.innerHTML = teaResult.blessing;
-        ritualInstruction.innerHTML = `🔮 神秘仪式：${teaResult.ritual}`;
-
-        resultArea.classList.add('show');
-        resultArea.scrollIntoView({ behavior: 'smooth' });
+        if (resultArea) resultArea.classList.remove('show');
 
         // 添加特效
         this.addResultEffects();
@@ -732,6 +789,8 @@ function resetSelection() {
         card.classList.remove('selected');
     });
     document.getElementById('result-area').classList.remove('show');
+    const rm = document.getElementById('result-modal');
+    if (rm) rm.classList.remove('show');
     
     // 重新生成运势和建议
     milkTeaSelector.updateFortune();
@@ -749,6 +808,11 @@ function closeSuccess() {
     document.getElementById('success-modal').classList.remove('show');
 }
 
+function closeResult() {
+    const m = document.getElementById('result-modal');
+    if (m) m.classList.remove('show');
+}
+
 // 初始化应用
 let teaSelector;
 document.addEventListener('DOMContentLoaded', () => {
@@ -761,20 +825,14 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeWarning();
         closeSuccess();
+        closeResult();
     }
     
-    // 数字键快速选择
-    const numKeys = ['1', '2', '3', '4', '5', '6'];
-    const choices = ['水逆', '桃花', '财运', '学业', '健康', '随机'];
-    
-    if (numKeys.includes(e.key)) {
-        const index = parseInt(e.key) - 1;
-        if (choices[index]) {
-            const cards = document.querySelectorAll('.choice-card');
-            if (cards[index]) {
-                cards[index].click();
-            }
-        }
+    // 数字键快速选择（支持前10个卡片：1-9, 0）
+    const indexMap = { '1':0,'2':1,'3':2,'4':3,'5':4,'6':5,'7':6,'8':7,'9':8,'0':9 };
+    const cards = Array.from(document.querySelectorAll('.choice-card'));
+    if (indexMap.hasOwnProperty(e.key) && cards[indexMap[e.key]]) {
+        cards[indexMap[e.key]].click();
     }
 });
 

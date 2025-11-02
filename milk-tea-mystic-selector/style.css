@@ -822,6 +822,32 @@ body {
     box-shadow: 0 5px 15px var(--shadow);
 }
 
+/* 结果弹窗强化样式 */
+.result-main {
+    font-size: 1.8rem;
+    color: var(--primary-red);
+    font-weight: bold;
+    margin: 8px 0 6px;
+}
+
+.result-sub {
+    font-size: 1.1rem;
+    color: var(--dark-red);
+    line-height: 1.6;
+}
+
+.extras {
+    margin-top: 8px;
+}
+
+.extras .extra-item {
+    background: rgba(255, 215, 0, 0.18);
+    border: 1px dashed var(--gold);
+    border-radius: 10px;
+    padding: 8px 10px;
+    margin: 6px 0;
+}
+
 /* 通知动画 */
 @keyframes slideIn {
     from {

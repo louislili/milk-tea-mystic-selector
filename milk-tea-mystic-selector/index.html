@@ -106,6 +106,49 @@
                     <p>让奶茶之神为你选择</p>
                     <div class="mystical-effect"></div>
                 </div>
+
+                <!-- 新增玄学选项 -->
+                <div class="choice-card" data-choice="事业">
+                    <div class="choice-icon">💼</div>
+                    <h3>事业上升</h3>
+                    <p>黑糖珍珠鲜奶，干劲满满</p>
+                    <div class="mystical-effect"></div>
+                </div>
+
+                <div class="choice-card" data-choice="社交">
+                    <div class="choice-icon">🤝</div>
+                    <h3>社交顺利</h3>
+                    <p>杨枝甘露，魅力加持</p>
+                    <div class="mystical-effect"></div>
+                </div>
+
+                <div class="choice-card" data-choice="家庭">
+                    <div class="choice-icon">🏠</div>
+                    <h3>家庭和睦</h3>
+                    <p>椰椰奶茶，温馨陪伴</p>
+                    <div class="mystical-effect"></div>
+                </div>
+
+                <div class="choice-card" data-choice="旅行">
+                    <div class="choice-icon">✈️</div>
+                    <h3>旅途顺利</h3>
+                    <p>鲜果茶，活力满满</p>
+                    <div class="mystical-effect"></div>
+                </div>
+
+                <div class="choice-card" data-choice="创意">
+                    <div class="choice-icon">🎨</div>
+                    <h3>灵感爆发</h3>
+                    <p>芝士乌龙，灵感加持</p>
+                    <div class="mystical-effect"></div>
+                </div>
+
+                <div class="choice-card" data-choice="睡眠">
+                    <div class="choice-icon">😴</div>
+                    <h3>好眠安稳</h3>
+                    <p>桂花乌龙，低咖清香</p>
+                    <div class="mystical-effect"></div>
+                </div>
             </div>
         </div>
 
@@ -119,6 +162,19 @@
                     <div class="ritual-instruction" id="ritual-instruction"></div>
                 </div>
                 <button class="retry-btn" onclick="resetSelection()">重新占卜</button>
+            </div>
+        </div>
+
+        <!-- 结果弹窗 -->
+        <div class="modal" id="result-modal">
+            <div class="modal-content">
+                <div class="result-icon">🧋</div>
+                <h3>奶茶之神的神谕</h3>
+                <div class="result-main" id="modal-tea"></div>
+                <p class="result-sub" id="modal-blessing"></p>
+                <p class="result-sub" id="modal-ritual"></p>
+                <div class="extras" id="modal-extras"></div>
+                <button class="modal-btn" onclick="resetSelection(); closeResult();">再来一次</button>
             </div>
         </div>
 
