@@ -4,8 +4,6 @@ class MilkTeaMysticSelector {
         this.history = JSON.parse(localStorage.getItem('teaHistory') || '[]');
         this.currentBuff = null;
         this.mysticalPower = Math.floor(Math.random() * 100) + 1;
-        this.showcaseRunning = false;
-        this.cancelShowcase = false;
         
         // 互动统计
         this.stats = JSON.parse(localStorage.getItem('teaStats') || '{"dailyCount": 0, "comboCount": 0, "luckValue": 50, "totalSelections": 0, "lastDate": ""}');
@@ -78,48 +76,6 @@ class MilkTeaMysticSelector {
             ritual: '闭上眼睛，让奶茶之神为你选择最适合的味道',
             icon: '🎲✨',
             power: 95
-        },
-        '事业': {
-            tea: '黑糖珍珠鲜奶',
-            blessing: '事业运上升，干劲满满！',
-            ritual: '写下今日目标并小口品尝，坚定心志',
-            icon: '💼✨',
-            power: 88
-        },
-        '社交': {
-            tea: '杨枝甘露',
-            blessing: '社交顺利，魅力加持！',
-            ritual: '对着杯子微笑三秒，心中默念“人缘提升”',
-            icon: '🤝💬',
-            power: 82
-        },
-        '家庭': {
-            tea: '椰椰奶茶',
-            blessing: '家庭和睦，温馨陪伴！',
-            ritual: '与家人共享一口奶茶，心连心',
-            icon: '🏠❤️',
-            power: 80
-        },
-        '旅行': {
-            tea: '鲜果茶',
-            blessing: '旅途顺利，活力满满！',
-            ritual: '看一眼地图，喝一口果茶，启程更顺',
-            icon: '✈️🍊',
-            power: 78
-        },
-        '创意': {
-            tea: '芝士乌龙',
-            blessing: '灵感爆发，创意加持！',
-            ritual: '闻茶香五秒，闭眼想象创意画面',
-            icon: '🎨💡',
-            power: 86
-        },
-        '睡眠': {
-            tea: '桂花乌龙（低咖）',
-            blessing: '好眠安稳，舒缓身心！',
-            ritual: '深呼吸三次，感受桂花清香入心',
-            icon: '😴🌙',
-            power: 76
         }
     };
 
@@ -225,7 +181,6 @@ class MilkTeaMysticSelector {
         try {
             // 检查玄学buff
             const buffResult = this.checkMysticalBuff();
-            this.currentBuff = buffResult.buff || null;
             
             if (buffResult.hasError) {
                 this.showWarning(buffResult.errorMessage);
@@ -248,7 +203,7 @@ class MilkTeaMysticSelector {
                 teaResult.blessing += ` 🎊 获得buff：${buffResult.buff.name} - ${buffResult.buff.effect}`;
             }
 
-            // 显示结果（弹窗集中展示）
+            // 显示结果
             this.showResult(teaResult, choice);
 
             // 统计选择类型
@@ -262,11 +217,11 @@ class MilkTeaMysticSelector {
             // 检查成就
             this.checkAchievements();
 
-            // 随机触发额外祝福提示（保留原成功弹窗逻辑）
+            // 显示成功弹窗
             if (Math.random() < 0.3) {
                 setTimeout(() => {
                     this.showSuccess('奶茶之神对你的选择很满意！你获得了额外的幸运加持！');
-                }, 1800);
+                }, 2000);
             }
 
         } catch (error) {
@@ -306,31 +261,17 @@ class MilkTeaMysticSelector {
     }
 
     showResult(teaResult, choice) {
-        // 更新弹窗内容
-        const modal = document.getElementById('result-modal');
-        const modalTea = document.getElementById('modal-tea');
-        const modalBlessing = document.getElementById('modal-blessing');
-        const modalRitual = document.getElementById('modal-ritual');
-        const modalExtras = document.getElementById('modal-extras');
-
-        modalTea.innerHTML = `${teaResult.icon} ${teaResult.tea}`;
-        modalBlessing.textContent = teaResult.blessing;
-        modalRitual.textContent = `🔮 神秘仪式：${teaResult.ritual}`;
-
-        const extras = [];
-        if (this.currentBuff) {
-            extras.push(`✨ Buff：${this.currentBuff.name} - ${this.currentBuff.effect}`);
-        }
-        if (this.pendingRewards && this.pendingRewards.length > 0) {
-            const r = this.pendingRewards[0];
-            extras.push(`🎁 奖励：${r.name} - ${r.desc}`);
-        }
-        modalExtras.innerHTML = extras.length ? extras.map(e => `<div class="extra-item">${e}</div>`).join('') : '';
-
-        // 显示弹窗并隐藏页面内结果区
-        modal.classList.add('show');
         const resultArea = document.getElementById('result-area');
-        if (resultArea) resultArea.classList.remove('show');
+        const teaRecommendation = document.getElementById('tea-recommendation');
+        const mysticalBlessing = document.getElementById('mystical-blessing');
+        const ritualInstruction = document.getElementById('ritual-instruction');
+
+        teaRecommendation.innerHTML = `${teaResult.icon} ${teaResult.tea}`;
+        mysticalBlessing.innerHTML = teaResult.blessing;
+        ritualInstruction.innerHTML = `🔮 神秘仪式：${teaResult.ritual}`;
+
+        resultArea.classList.add('show');
+        resultArea.scrollIntoView({ behavior: 'smooth' });
 
         // 添加特效
         this.addResultEffects();
@@ -651,217 +592,6 @@ class MilkTeaMysticSelector {
             }, index * 1000);
         });
     }
-
-    // 成就炫酷弹窗展示（演示模式，不改动状态）
-    startAchievementShowcase(fast = true) {
-        if (this.showcaseRunning) return;
-        this.showcaseRunning = true;
-        this.cancelShowcase = false;
-
-        let overlay = document.getElementById('ach-showcase-overlay');
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.id = 'ach-showcase-overlay';
-            overlay.className = 'ach-showcase-overlay';
-            document.body.appendChild(overlay);
-        }
-
-        // 快速模式用于录制
-        overlay.className = 'ach-showcase-overlay' + (fast ? ' ach-fast' : '');
-
-        const defs = this.achievementDefinitions.slice();
-        let i = 0;
-
-        const next = () => {
-            if (this.cancelShowcase || i >= defs.length) {
-                overlay.classList.remove('show');
-                setTimeout(() => {
-                    try { overlay.remove(); } catch(e) {}
-                    this.showcaseRunning = false;
-                }, 150);
-                return;
-            }
-
-            const ach = defs[i++];
-            overlay.innerHTML = '';
-            overlay.classList.add('show');
-
-            const card = document.createElement('div');
-            card.className = 'ach-showcase-card';
-            card.innerHTML = `
-                <div class="ach-ribbon">演示</div>
-                <div class="ach-icon">${ach.icon}</div>
-                <div class="ach-title">${ach.title}</div>
-                <div class="ach-desc">${ach.desc}</div>
-                <div class="ach-sparkles"></div>
-            `;
-            overlay.appendChild(card);
-
-            // 生成闪光粒子
-            const spark = card.querySelector('.ach-sparkles');
-            for (let s = 0; s < 12; s++) {
-                const span = document.createElement('span');
-                span.style.left = (Math.random() * 100) + '%';
-                span.style.top = (Math.random() * 100) + '%';
-                spark.appendChild(span);
-            }
-
-            const showMs = fast ? 700 : 1000;
-            const leaveMs = fast ? 180 : 220;
-
-            setTimeout(() => {
-                card.classList.add('ach-leave');
-                setTimeout(() => {
-                    overlay.classList.remove('show');
-                    setTimeout(next, fast ? 120 : 160);
-                }, leaveMs);
-            }, showMs);
-        };
-
-        next();
-    }
-
-    stopAchievementShowcase() {
-        this.cancelShowcase = true;
-    }
-
-    // 更炫酷：扑克牌洗牌式叠加连播（不改动任何状态）
-    startAchievementShowcaseDeck(mode = 'medium') {
-        if (this.deckRunning) return;
-        this.deckRunning = true;
-        this.cancelDeck = false;
-
-        let overlay = document.getElementById('ach-showcase-overlay');
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.id = 'ach-showcase-overlay';
-            overlay.className = 'ach-showcase-overlay';
-            document.body.appendChild(overlay);
-        }
-        overlay.className = 'ach-showcase-overlay';
-        overlay.classList.add('show');
-
-        // deck 容器
-        const deck = document.createElement('div');
-        deck.className = 'ach-deck' + (fast ? ' fast' : '');
-        const inner = document.createElement('div');
-        inner.className = 'deck-inner';
-        const glow = document.createElement('div');
-        glow.className = 'glow';
-        deck.appendChild(glow);
-        deck.appendChild(inner);
-        overlay.innerHTML = '';
-        overlay.appendChild(deck);
-
-        const defs = this.achievementDefinitions.slice();
-        const speed = {
-            slow:   { interval: 480, inMs: 1000, showMs: 1200, exitMs: 420 },
-            medium: { interval: 320, inMs: 860,  showMs: 1050, exitMs: 360 },
-            fast:   { interval: 180, inMs: 680,  showMs: 880,  exitMs: 280 }
-        }[mode] || { interval: 320, inMs: 860, showMs: 1050, exitMs: 360 };
-        const { interval, inMs, showMs, exitMs } = speed;
-        let i = 0;
-
-        const spawnCard = (ach) => {
-            if (this.cancelDeck) return;
-            const card = document.createElement('div');
-            card.className = 'ach-card';
-            // 取消默认 CSS 入场动画，改用 WAAPI 路径动画
-            card.style.animation = 'none';
-            const r = (Math.random() * 10 - 5).toFixed(2);
-            const z = (Math.random() * 30).toFixed(0);
-            card.style.setProperty('--r', r + 'deg');
-            card.style.setProperty('--z', z + 'px');
-
-            card.innerHTML = `
-                <div class="ach-ribbon">演示</div>
-                <div class="ach-content">
-                    <div class="icon">${ach.icon}</div>
-                    <div class="title">${ach.title}</div>
-                    <div class="desc">${ach.desc}</div>
-                </div>
-                <div class="ach-slice-layer"></div>
-            `;
-
-            // 切片光带层
-            const layer = card.querySelector('.ach-slice-layer');
-            const sliceCount = 5 + Math.floor(Math.random() * 3); // 5-7
-            for (let s = 0; s < sliceCount; s++) {
-                const bar = document.createElement('div');
-                bar.className = 'bar';
-                const w = (16 + Math.random() * 14).toFixed(1); // 16% - 30%
-                const x = (Math.random() * (100 - w)).toFixed(1) + '%';
-                const wave = (mode === 'fast') ? 0.06 : (mode === 'slow') ? 0.12 : 0.09;
-                const delay = (wave * s + Math.random() * wave).toFixed(2) + 's';
-                bar.style.setProperty('--w', w + '%');
-                bar.style.setProperty('--x', x);
-                bar.style.setProperty('--delay', delay);
-                layer.appendChild(bar);
-            }
-
-            inner.appendChild(card);
-            // —— 分槽位线性飞入/飞出（WAAPI） ——
-            const rect = inner.getBoundingClientRect();
-            const W = rect.width, H = rect.height;
-            // 槽位（每张卡有独立位置，避免全堆在中间）
-            const slots = [
-                { x: 0.15, y: 0.30 }, { x: 0.36, y: 0.22 }, { x: 0.60, y: 0.30 },
-                { x: 0.24, y: 0.58 }, { x: 0.50, y: 0.52 }, { x: 0.76, y: 0.58 },
-                { x: 0.34, y: 0.42 }, { x: 0.66, y: 0.45 }
-            ];
-            const slot = slots[i % slots.length];
-            const tx = (slot.x - 0.5) * W;
-            const ty = (slot.y - 0.5) * H;
-            const jitterY = (Math.random() * 32 - 16);
-            const sr = (parseFloat(r) - 6).toFixed(2);
-            const tr = (parseFloat(r) + 2).toFixed(2);
-            // 从左侧外部飞入（线性轨迹），到右侧外部飞出
-            const sx = -W * 0.55;
-            const sy = ty + jitterY;
-            const ex = W * 0.85;
-            const ey = ty + jitterY * 0.5 + 18;
-
-            card.style.zIndex = 100 + i;
-            const enter = card.animate([
-                { transform: `translate(${sx}px, ${sy}px) rotate(${sr}deg) scale(0.94)`, opacity: 0 },
-                { transform: `translate(${tx}px, ${ty}px) rotate(${tr}deg) scale(1)`,   opacity: 1 }
-            ], { duration: inMs, easing: 'cubic-bezier(.2, 1.2, .2, 1)', fill: 'both' });
-
-            const leaveAt = inMs + showMs;
-            setTimeout(() => {
-                if (this.cancelDeck) return;
-                const exit = card.animate([
-                    { transform: `translate(${tx}px, ${ty}px) rotate(${tr}deg) scale(1)`,   opacity: 1 },
-                    { transform: `translate(${ex}px, ${ey}px) rotate(${(parseFloat(tr)+6).toFixed(2)}deg) scale(0.92)`, opacity: 0 }
-                ], { duration: exitMs, easing: 'ease-in', fill: 'forwards' });
-                exit.onfinish = () => { try { card.remove(); } catch(e) {} };
-            }, leaveAt);
-        };
-
-        const runner = setInterval(() => {
-            if (this.cancelDeck || i >= defs.length) {
-                clearInterval(runner);
-                setTimeout(() => {
-                    overlay.classList.remove('show');
-                    setTimeout(() => {
-                        try { overlay.remove(); } catch(e) {}
-                        this.deckRunning = false;
-                    }, 160);
-                }, inMs + showMs + exitMs);
-                return;
-            }
-            spawnCard(defs[i++]);
-        }, interval);
-    }
-
-    stopAchievementShowcaseDeck() {
-        this.cancelDeck = true;
-        const overlay = document.getElementById('ach-showcase-overlay');
-        if (overlay) {
-            try { overlay.remove(); } catch (e) {}
-        }
-        this.deckRunning = false;
-    }
     
     // 奖励系统函数
     generateReward(achievement) {
@@ -1002,8 +732,6 @@ function resetSelection() {
         card.classList.remove('selected');
     });
     document.getElementById('result-area').classList.remove('show');
-    const rm = document.getElementById('result-modal');
-    if (rm) rm.classList.remove('show');
     
     // 重新生成运势和建议
     milkTeaSelector.updateFortune();
@@ -1021,11 +749,6 @@ function closeSuccess() {
     document.getElementById('success-modal').classList.remove('show');
 }
 
-function closeResult() {
-    const m = document.getElementById('result-modal');
-    if (m) m.classList.remove('show');
-}
-
 // 初始化应用
 let teaSelector;
 document.addEventListener('DOMContentLoaded', () => {
@@ -1038,45 +761,19 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeWarning();
         closeSuccess();
-        closeResult();
-        if (window.teaSelector) {
-            window.teaSelector.stopAchievementShowcase();
-            window.teaSelector.stopAchievementShowcaseDeck();
-        }
     }
     
-    // 数字键快速选择（支持前10个卡片：1-9, 0）
-    const indexMap = { '1':0,'2':1,'3':2,'4':3,'5':4,'6':5,'7':6,'8':7,'9':8,'0':9 };
-    const cards = Array.from(document.querySelectorAll('.choice-card'));
-    if (indexMap.hasOwnProperty(e.key) && cards[indexMap[e.key]]) {
-        cards[indexMap[e.key]].click();
-    }
-
-    // 快捷键：Shift + A 触发成就演示（快速模式）
-    if (e.shiftKey && (e.key === 'A' || e.key === 'a')) {
-        if (window.teaSelector) {
-            window.teaSelector.startAchievementShowcase(true);
-        }
-    }
-
-    // 快捷键：Shift + D 触发扑克牌洗牌式连播（中速、分槽位）
-    if (e.shiftKey && (e.key === 'D' || e.key === 'd')) {
-        if (window.teaSelector) {
-            window.teaSelector.startAchievementShowcaseDeck('medium');
-        }
-    }
-
-    // 快捷键：Shift + S 慢速连播（更从容）
-    if (e.shiftKey && (e.key === 'S' || e.key === 's')) {
-        if (window.teaSelector) {
-            window.teaSelector.startAchievementShowcaseDeck('slow');
-        }
-    }
-
-    // 快捷键：Shift + F 快速连播（更刺激）
-    if (e.shiftKey && (e.key === 'F' || e.key === 'f')) {
-        if (window.teaSelector) {
-            window.teaSelector.startAchievementShowcaseDeck('fast');
+    // 数字键快速选择
+    const numKeys = ['1', '2', '3', '4', '5', '6'];
+    const choices = ['水逆', '桃花', '财运', '学业', '健康', '随机'];
+    
+    if (numKeys.includes(e.key)) {
+        const index = parseInt(e.key) - 1;
+        if (choices[index]) {
+            const cards = document.querySelectorAll('.choice-card');
+            if (cards[index]) {
+                cards[index].click();
+            }
         }
     }
 });
