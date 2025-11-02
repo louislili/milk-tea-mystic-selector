@@ -4,6 +4,8 @@ class MilkTeaMysticSelector {
         this.history = JSON.parse(localStorage.getItem('teaHistory') || '[]');
         this.currentBuff = null;
         this.mysticalPower = Math.floor(Math.random() * 100) + 1;
+        this.showcaseRunning = false;
+        this.cancelShowcase = false;
         
         // 互动统计
         this.stats = JSON.parse(localStorage.getItem('teaStats') || '{"dailyCount": 0, "comboCount": 0, "luckValue": 50, "totalSelections": 0, "lastDate": ""}');
@@ -649,6 +651,178 @@ class MilkTeaMysticSelector {
             }, index * 1000);
         });
     }
+
+    // 成就炫酷弹窗展示（演示模式，不改动状态）
+    startAchievementShowcase(fast = true) {
+        if (this.showcaseRunning) return;
+        this.showcaseRunning = true;
+        this.cancelShowcase = false;
+
+        let overlay = document.getElementById('ach-showcase-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'ach-showcase-overlay';
+            overlay.className = 'ach-showcase-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        // 快速模式用于录制
+        overlay.className = 'ach-showcase-overlay' + (fast ? ' ach-fast' : '');
+
+        const defs = this.achievementDefinitions.slice();
+        let i = 0;
+
+        const next = () => {
+            if (this.cancelShowcase || i >= defs.length) {
+                overlay.classList.remove('show');
+                setTimeout(() => {
+                    try { overlay.remove(); } catch(e) {}
+                    this.showcaseRunning = false;
+                }, 150);
+                return;
+            }
+
+            const ach = defs[i++];
+            overlay.innerHTML = '';
+            overlay.classList.add('show');
+
+            const card = document.createElement('div');
+            card.className = 'ach-showcase-card';
+            card.innerHTML = `
+                <div class="ach-ribbon">演示</div>
+                <div class="ach-icon">${ach.icon}</div>
+                <div class="ach-title">${ach.title}</div>
+                <div class="ach-desc">${ach.desc}</div>
+                <div class="ach-sparkles"></div>
+            `;
+            overlay.appendChild(card);
+
+            // 生成闪光粒子
+            const spark = card.querySelector('.ach-sparkles');
+            for (let s = 0; s < 12; s++) {
+                const span = document.createElement('span');
+                span.style.left = (Math.random() * 100) + '%';
+                span.style.top = (Math.random() * 100) + '%';
+                spark.appendChild(span);
+            }
+
+            const showMs = fast ? 700 : 1000;
+            const leaveMs = fast ? 180 : 220;
+
+            setTimeout(() => {
+                card.classList.add('ach-leave');
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                    setTimeout(next, fast ? 120 : 160);
+                }, leaveMs);
+            }, showMs);
+        };
+
+        next();
+    }
+
+    stopAchievementShowcase() {
+        this.cancelShowcase = true;
+    }
+
+    // 更炫酷：扑克牌洗牌式叠加连播（不改动任何状态）
+    startAchievementShowcaseDeck(fast = true) {
+        if (this.deckRunning) return;
+        this.deckRunning = true;
+        this.cancelDeck = false;
+
+        let overlay = document.getElementById('ach-showcase-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'ach-showcase-overlay';
+            overlay.className = 'ach-showcase-overlay';
+            document.body.appendChild(overlay);
+        }
+        overlay.className = 'ach-showcase-overlay';
+        overlay.classList.add('show');
+
+        // deck 容器
+        const deck = document.createElement('div');
+        deck.className = 'ach-deck' + (fast ? ' fast' : '');
+        const inner = document.createElement('div');
+        inner.className = 'deck-inner';
+        const glow = document.createElement('div');
+        glow.className = 'glow';
+        deck.appendChild(glow);
+        deck.appendChild(inner);
+        overlay.innerHTML = '';
+        overlay.appendChild(deck);
+
+        const defs = this.achievementDefinitions.slice();
+        const interval = fast ? 140 : 220; // 投放间隔
+        const showMs = fast ? 800 : 1000;  // 单卡展示时长
+        const exitMs = fast ? 240 : 320;   // 单卡退场时长
+        let i = 0;
+
+        const spawnCard = (ach) => {
+            if (this.cancelDeck) return;
+            const card = document.createElement('div');
+            card.className = 'ach-card';
+            const r = (Math.random() * 12 - 6).toFixed(2);
+            const z = (Math.random() * 30).toFixed(0);
+            card.style.setProperty('--r', r + 'deg');
+            card.style.setProperty('--z', z + 'px');
+
+            card.innerHTML = `
+                <div class="ach-ribbon">演示</div>
+                <div class="ach-content">
+                    <div class="icon">${ach.icon}</div>
+                    <div class="title">${ach.title}</div>
+                    <div class="desc">${ach.desc}</div>
+                </div>
+                <div class="ach-slice-layer"></div>
+            `;
+
+            // 切片光带层
+            const layer = card.querySelector('.ach-slice-layer');
+            const sliceCount = 5 + Math.floor(Math.random() * 3); // 5-7
+            for (let s = 0; s < sliceCount; s++) {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                const w = (16 + Math.random() * 14).toFixed(1); // 16% - 30%
+                const x = (Math.random() * (100 - w)).toFixed(1) + '%';
+                const delay = ((fast ? 0.06 : 0.1) * s + Math.random() * (fast ? 0.06 : 0.1)).toFixed(2) + 's';
+                bar.style.setProperty('--w', w + '%');
+                bar.style.setProperty('--x', x);
+                bar.style.setProperty('--delay', delay);
+                layer.appendChild(bar);
+            }
+
+            inner.appendChild(card);
+
+            // 退场 & 清理
+            setTimeout(() => {
+                card.classList.add('leave');
+                setTimeout(() => {
+                    try { card.remove(); } catch(e) {}
+                }, exitMs);
+            }, showMs);
+        };
+
+        const runner = setInterval(() => {
+            if (this.cancelDeck || i >= defs.length) {
+                clearInterval(runner);
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                    setTimeout(() => {
+                        try { overlay.remove(); } catch(e) {}
+                        this.deckRunning = false;
+                    }, 160);
+                }, showMs + exitMs);
+                return;
+            }
+            spawnCard(defs[i++]);
+        }, interval);
+    }
+
+    stopAchievementShowcaseDeck() {
+        this.cancelDeck = true;
+    }
     
     // 奖励系统函数
     generateReward(achievement) {
@@ -826,6 +1000,10 @@ document.addEventListener('keydown', (e) => {
         closeWarning();
         closeSuccess();
         closeResult();
+        if (window.teaSelector) {
+            window.teaSelector.stopAchievementShowcase();
+            window.teaSelector.stopAchievementShowcaseDeck();
+        }
     }
     
     // 数字键快速选择（支持前10个卡片：1-9, 0）
@@ -833,6 +1011,20 @@ document.addEventListener('keydown', (e) => {
     const cards = Array.from(document.querySelectorAll('.choice-card'));
     if (indexMap.hasOwnProperty(e.key) && cards[indexMap[e.key]]) {
         cards[indexMap[e.key]].click();
+    }
+
+    // 快捷键：Shift + A 触发成就演示（快速模式）
+    if (e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        if (window.teaSelector) {
+            window.teaSelector.startAchievementShowcase(true);
+        }
+    }
+
+    // 快捷键：Shift + D 触发扑克牌洗牌式连播（更炫酷）
+    if (e.shiftKey && (e.key === 'D' || e.key === 'd')) {
+        if (window.teaSelector) {
+            window.teaSelector.startAchievementShowcaseDeck(true);
+        }
     }
 });
 

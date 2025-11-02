@@ -931,3 +931,205 @@ body {
 .oss-banner a:hover {
     text-decoration: underline;
 }
+
+/* 成就炫酷弹窗展示（临时特效） */
+.ach-showcase-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(1200px 800px at 50% 50%, rgba(255,255,255,0.08), rgba(0,0,0,0.65));
+    backdrop-filter: blur(6px) saturate(1.15);
+}
+
+.ach-showcase-overlay.show {
+    display: flex;
+    animation: fadeIn 0.18s ease-out;
+}
+
+.ach-showcase-card {
+    width: min(560px, 88vw);
+    border-radius: 22px;
+    padding: 28px 26px;
+    text-align: center;
+    color: #2b0b0b;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,250,245,0.95)) padding-box,
+        linear-gradient(135deg, #ff6b6b, #ffd93d, #ff9f1c) border-box;
+    border: 3px solid transparent;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.35), inset 0 0 60px rgba(255, 215, 0, 0.15);
+    animation: showcasePopIn 0.28s cubic-bezier(.2,1.2,.2,1);
+    position: relative;
+}
+
+.ach-icon {
+    font-size: 3rem;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.2));
+}
+
+.ach-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--primary-red);
+    margin: 6px 0 8px;
+}
+
+.ach-desc {
+    font-size: 1.05rem;
+    color: var(--dark-red);
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.ach-ribbon {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+    color: #3a0f0f;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    transform: rotate(6deg);
+}
+
+.ach-sparkles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.ach-sparkles span {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, #fff 0%, #ffd93d 40%, rgba(255,255,255,0) 70%);
+    border-radius: 50%;
+    filter: blur(0.5px);
+    animation: sparkleFloat 0.9s ease-out forwards;
+}
+
+@keyframes sparkleFloat {
+    from { transform: translateY(8px) scale(0.8); opacity: 0; }
+    50% { opacity: 1; }
+    to { transform: translateY(-22px) scale(1.1); opacity: 0; }
+}
+
+@keyframes showcasePopIn {
+    0% { opacity: 0; transform: translateY(12px) scale(0.86) rotate(-1deg); }
+    60% { opacity: 1; transform: translateY(-4px) scale(1.04) rotate(0.4deg); }
+    100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+}
+
+.ach-leave {
+    animation: showcaseLeave 0.22s ease-in forwards;
+}
+
+@keyframes showcaseLeave {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(18px) scale(0.9); }
+}
+
+/* 快速模式：减少间隔以便录制 */
+.ach-fast .ach-showcase-card { animation-duration: 0.22s; }
+.ach-fast .ach-leave { animation-duration: 0.18s; }
+
+/* —— 扑克牌洗牌式连播（更炫酷的多卡叠加效果） —— */
+.ach-deck {
+    position: fixed;
+    inset: 0;
+    z-index: 1150;
+    pointer-events: none;
+    display: grid;
+    place-items: center;
+    perspective: 1100px;
+}
+
+.ach-deck .deck-inner {
+    position: relative;
+    width: min(780px, 90vw);
+    height: min(480px, 64vh);
+}
+
+.ach-deck .glow {
+    position: absolute;
+    inset: -12%;
+    background: radial-gradient(closest-side, rgba(255, 230, 170, 0.45), rgba(255, 230, 170, 0));
+    filter: blur(22px);
+    animation: glowPulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse {
+    from { opacity: 0.55; }
+    to { opacity: 0.25; }
+}
+
+.ach-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(var(--r, 0deg)) translateZ(var(--z, 0px));
+    width: clamp(280px, 56vw, 520px);
+    border-radius: 18px;
+    background:
+        linear-gradient(135deg, #fffaf2, #fff) padding-box,
+        linear-gradient(135deg, #ff6b6b, #ffd93d) border-box;
+    border: 3px solid transparent;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.32);
+    will-change: transform, opacity, filter;
+    animation: cardEnter var(--enterMs, 0.6s) cubic-bezier(.2, 1.2, .2, 1) both;
+}
+
+.ach-card.leave {
+    animation: cardExit var(--exitMs, 0.24s) ease-in both;
+    filter: blur(0.4px);
+}
+
+@keyframes cardEnter {
+    0% { opacity: 0; transform: translate(-50%, -30%) rotate(-8deg) scale(0.86); }
+    70% { opacity: 1; transform: translate(-50%, -48%) rotate(2deg) scale(1.04); }
+    100% { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+}
+
+@keyframes cardExit {
+    from { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+    to { opacity: 0; transform: translate(-50%, 10%) rotate(8deg) scale(0.92); }
+}
+
+.ach-content {
+    padding: 24px 22px;
+    text-align: center;
+    color: #2b0b0b;
+}
+
+.ach-content .icon { font-size: 2.6rem; filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2)); }
+.ach-content .title { font-size: 1.7rem; font-weight: 800; color: var(--primary-red); margin: 4px 0 6px; }
+.ach-content .desc { font-size: 1.02rem; color: var(--dark-red); opacity: 0.92; }
+
+.ach-slice-layer { position: absolute; inset: 0; overflow: hidden; border-radius: 18px; pointer-events: none; }
+.ach-slice-layer .bar {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: var(--w, 22%);
+    left: var(--x, 0%);
+    background: linear-gradient(to bottom, rgba(255, 215, 0, 0.35), rgba(255, 105, 80, 0.35));
+    mix-blend-mode: screen;
+    transform: translateX(-120%);
+    animation: sliceSlide var(--sliceMs, 0.7s) ease-in-out var(--delay, 0s) forwards;
+    filter: blur(1px);
+}
+
+@keyframes sliceSlide {
+    from { transform: translateX(-120%) skewX(-8deg); opacity: 0; }
+    30% { opacity: 0.9; }
+    to { transform: translateX(120%) skewX(8deg); opacity: 0; }
+}
+
+/* 快速模式调整 */
+.ach-deck.fast .ach-card { --enterMs: 0.52s; }
+.ach-deck.fast .ach-card.leave { --exitMs: 0.22s; }
