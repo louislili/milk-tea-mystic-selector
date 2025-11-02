@@ -743,7 +743,7 @@ class MilkTeaMysticSelector {
 
         // deck 容器
         const deck = document.createElement('div');
-        deck.className = 'ach-deck' + (fast ? ' fast' : '');
+        deck.className = 'ach-deck' + (mode === 'fast' ? ' fast' : '');
         const inner = document.createElement('div');
         inner.className = 'deck-inner';
         const glow = document.createElement('div');
