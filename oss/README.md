@@ -1,9 +1,6 @@
-<div align="right"><a href="https://yigather.com/milk-tea-mystic-selector/index.html">线上体验地址 →</a></div>
 <div align="center">
 
-# 🧋 Milk Tea Mystic Selector
-
-<img src="./home.png" alt="项目首页预览" width="900" />
+# 🧋 Milk Tea Mystic Selector 奶茶玄学推荐器
 
 ### 专治选择困难症 · 让决策变得简单有趣
 
@@ -88,9 +85,10 @@ npx serve . -p 8080
 
 ```bash
 # 方式三：直接打开（基础功能）
-直接双击 index.html
+直接双击 oss/index.html
 ```
 
+**立即访问：** `http://localhost:8080/oss/`
 
 [![Open in Gitpod](https://img.shields.io/badge/Open_in-Gitpod-black?style=for-the-badge&logo=gitpod)](https://gitpod.io/#https://github.com/louislili/milk-tea-mystic-selector)
 [![Deploy on Netlify](https://img.shields.io/badge/Deploy_on-Netlify-00C7B7?style=for-the-badge&logo=netlify)](https://app.netlify.com/start/deploy?repository=https://github.com/louislili/milk-tea-mystic-selector)
